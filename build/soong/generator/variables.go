@@ -6,12 +6,12 @@ import (
 	"android/soong/android"
 )
 
-func stagExpandVariables(ctx android.ModuleContext, in string) string {
-	stagVars := ctx.Config().VendorConfig("stagVarsPlugin")
+func celestialExpandVariables(ctx android.ModuleContext, in string) string {
+	celestialVars := ctx.Config().VendorConfig("celestialVarsPlugin")
 
 	out, err := android.Expand(in, func(name string) (string, error) {
-		if stagVars.IsSet(name) {
-			return stagVars.String(name), nil
+		if celestialVars.IsSet(name) {
+			return celestialVars.String(name), nil
 		}
 		// This variable is not for us, restore what the original
 		// variable string will have looked like for an Expand

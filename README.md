@@ -1,1 +1,1 @@
-# android_vendor_stag
+# android_vendor_celestial

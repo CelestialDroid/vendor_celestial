@@ -16,7 +16,7 @@
  */
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.stag.udfps.resources"
+    package="com.celestial.udfps.resources"
     android:versionCode="1"
     android:versionName="1.0">
 

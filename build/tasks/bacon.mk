@@ -1,6 +1,5 @@
-
 # Copyright (C) 2017 Unlegacy-Android
-# Copyright (C) 2017 The LineageOS Project
+# Copyright (C) 2017,2020 The LineageOS Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,41 +14,14 @@
 # limitations under the License.
 
 # -----------------------------------------------------------------
-# StagOS OTA update package
+# Lineage OTA update package
 
-# Build system colors
- ifneq ($(BUILD_WITH_COLORS),0)
-  CL_RED="\033[31m"
-  CL_GRN="\033[32m"
-  CL_YLW="\033[33m"
-  CL_BLU="\033[34m"
-  CL_MAG="\033[35m"
-  CL_CYN="\033[36m"
-  CL_RST="\033[0m"
-endif
+CELESTIAL_TARGET_PACKAGE := $(PRODUCT_OUT)/celestial-$(CELESTIAL_VERSION).zip
 
-STAG_TARGET_PACKAGE := $(PRODUCT_OUT)/$(STAG_VERSION).zip
-MD5 := prebuilts/build-tools/path/$(HOST_PREBUILT_TAG)/md5sum
+SHA256 := prebuilts/build-tools/path/$(HOST_PREBUILT_TAG)/sha256sum
 
-.PHONY: bacon stag
-bacon: $(INTERNAL_OTA_PACKAGE_TARGET)
-	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(STAG_TARGET_PACKAGE)
-	$(hide) $(MD5) $(STAG_TARGET_PACKAGE) | sed "s|$(PRODUCT_OUT)/||" > $(STAG_TARGET_PACKAGE).md5sum
-	@echo "Package Complete: $(STAG_TARGET_PACKAGE)" >&2
-
-stag: $(INTERNAL_OTA_PACKAGE_TARGET)
-	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(STAG_TARGET_PACKAGE)
-	$(hide) $(MD5) $(STAG_TARGET_PACKAGE) > $(STAG_TARGET_PACKAGE).md5sum
-	$(hide) ./vendor/stag/tools/json.sh $(STAG_TARGET_PACKAGE)
-
-
-	echo -e ${CL_RED}"    ______________   ______      ____  _____"${CL_RST}
-	echo -e ${CL_GRN}"   / ___/_  __/   | / ____/     / __ \/ ___/"${CL_RST}
-	echo -e ${CL_CYN}"   \__ \ / / / /| |/ / ________/ / / /\__ \ "${CL_RST}
-	echo -e ${CL_BLU}"  ___/ // / / ___ / /_/ /_____/ /_/ /___/ / "${CL_RST}
-	echo -e ${CL_MAG}" /____//_/ /_/  |_\____/      \____//____/  "${CL_RST}
-	echo -e ${CL_BLD}${CL_CYN}"===============-Sic Parvis Magna-==============="${CL_RST}
-	echo -e ${CL_BLD}${CL_YLW}"Name: "${CL_YLW} $(STAG_VERSION).zip${CL_RST}
-	echo -e ${CL_BLD}${CL_YLW}"MD5: "${CL_YLW}" `cat $(STAG_TARGET_PACKAGE).md5sum | awk '{print $$1}' `"${CL_RST}
-	echo -e ${CL_BLD}${CL_YLW}"Size:"${CL_YLW}" `du -sh $(STAG_TARGET_PACKAGE) | awk '{print $$1}' `"${CL_RST}
-	echo -e ${CL_BLD}${CL_CYN}"====================================================="${CL_RST}
+.PHONY: bacon
+bacon: $(DEFAULT_GOAL) $(INTERNAL_OTA_PACKAGE_TARGET)
+	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(CELESTIAL_TARGET_PACKAGE)
+	$(hide) $(SHA256) $(CELESTIAL_TARGET_PACKAGE) | sed "s|$(PRODUCT_OUT)/||" > $(CELESTIAL_TARGET_PACKAGE).sha256sum
+	@echo "Package Complete: $(CELESTIAL_TARGET_PACKAGE)" >&2

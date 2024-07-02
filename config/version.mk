@@ -1,64 +1,51 @@
-# Copyright (C) 2016 The Pure Nexus Project
-# Copyright (C) 2016 The JDCTeam
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+PRODUCT_VERSION_MAJOR = 0
+PRODUCT_VERSION_MINOR = 1
 
-# ANDROID_VERSION.QPR.MINVERSION
-StagOS_VERSION = 14.3.0
-
-STAG_BASE_VERSION = $(StagOS_VERSION)
-
-CURRENT_DEVICE=$(shell echo "$(TARGET_PRODUCT)" | cut -d'_' -f 2,3)
-TARGET_PRODUCT_SHORT := $(subst aosp_,,$(CUSTOM_BUILD))
-
-ifeq ($(BUILD_TYPE),OFFICIAL)
-      IS_OFFICIAL=true
-      STAG_BUILD_TYPE := OFFICIAL
+ifeq ($(CELESTIAL_VERSION_APPEND_TIME_OF_DAY),true)
+    CELESTIAL_BUILD_DATE := $(shell date -u +%Y%m%d_%H%M%S)
 else
-ifeq ($(BUILD_TYPE),TEST)
-   STAG_BUILD_TYPE := TEST
-else
-   STAG_BUILD_TYPE := UNOFFICIAL
-endif
+    CELESTIAL_BUILD_DATE := $(shell date -u +%Y%m%d)
 endif
 
-STAG_ZIP_TYPE = Pristine
+# Set CELESTIAL_BUILDTYPE from the env RELEASE_TYPE, for jenkins compat
 
-# GApps
-ifeq ($(WITH_GAPPS),true)
-STAG_ZIP_TYPE := GApps
+ifndef
+    ifdef RELEASE_TYPE
+        # Starting with "CELESTIAL_" is optional
+        RELEASE_TYPE := $(shell echo $(RELEASE_TYPE) | sed -e 's|^CELESTIAL_||g')
+        CELESTIAL_BUILDTYPE := $(RELEASE_TYPE)
+    endif
 endif
 
-STAG_VERSION := StagOS-$(CURRENT_DEVICE)-$(StagOS_VERSION)-$(STAG_BUILD_TYPE)-$(STAG_ZIP_TYPE)-$(shell date -u +%Y%m%d-%H%M)
-
-ifneq ($(STAG_RELEASE_KEYS),)
-      STAG_VERSION := $(STAG_VERSION)-signed
-      PRODUCT_DEFAULT_DEV_CERTIFICATE := ./.android-certs/releasekey
+# Filter out random types, so it'll reset to UNOFFICIAL
+ifeq ($(filter RELEASE NIGHTLY SNAPSHOT EXPERIMENTAL,$(CELESTIAL_BUILDTYPE)),)
+    CELESTIAL_BUILDTYPE := UNOFFICIAL
+    CELESTIAL_EXTRAVERSION :=
 endif
+
+ifeq ($(CELESTIAL_BUILDTYPE), UNOFFICIAL)
+    ifneq ($(TARGET_UNOFFICIAL_BUILD_ID),)
+        CELESTIAL_EXTRAVERSION := -$(TARGET_UNOFFICIAL_BUILD_ID)
+    endif
+endif
+
+CELESTIAL_VERSION_SUFFIX := $(CELESTIAL_BUILD_DATE)-$(CELESTIAL_BUILDTYPE)$(CELESTIAL_EXTRAVERSION)-$(CELESTIAL_BUILD)
+
+# Internal version
+CELESTIAL_VERSION := CELESTIAL_$(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR)-$(CELESTIAL_VERSION_SUFFIX)
+
+# Display version
+CELESTIAL_DISPLAY_VERSION := $(PRODUCT_VERSION_MAJOR)-$(CELESTIAL_VERSION_SUFFIX)
 
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
- ro.stag.version=$(STAG_VERSION) \
- ro.stag.releasetype=$(STAG_BUILD_TYPE) \
- ro.mod.version=$(StagOS_VERSION) \
- ro.stag.build.version=$(STAG_BASE_VERSION) \
- ro.stag.ziptype=$(STAG_ZIP_TYPE) \
- ro.stag.settings.android_version=$(STAG_PLATFORM_RELEASE_OR_CODENAME)
+ ro.celestial.version=$(CELESTIAL_VERSION) \
+ ro.celestial.releasetype=$(CELESTIAL_BUILDTYPE) \
+ ro.mod.version=$(CELESTIAL_VERSION) \
+ ro.celestial.build.version=$(CELESTIAL_DISPLAY_VERSION) \
+ ro.celestial.settings.android_version=$(CELESTIAL_EXTRAVERSION)
 
-
-STAG_DISPLAY_VERSION := StagOS-$(StagOS_VERSION)-$(STAG_BUILD_TYPE)
-ROM_FINGERPRINT := StagOS/$(STAG_VERSION)/$(TARGET_PRODUCT_SHORT)/$(shell date -u +%Y%m%d-%H%M)
+ROM_FINGERPRINT := CelestialDroid/$(CELESTIAL_VERSION)/$(TARGET_PRODUCT_SHORT)/$(shell date -u +%Y%m%d-%H%M)
 
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
- ro.stag.display.version=$(STAG_DISPLAY_VERSION) \
- ro.stag.fingerprint=$(ROM_FINGERPRINT)
-
+ ro.celestial.display.version=$(CELESTIAL_DISPLAY_VERSION) \
+ ro.celestial.fingerprint=$(ROM_FINGERPRINT)

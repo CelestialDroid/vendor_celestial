@@ -1,8 +1,8 @@
-// StagOS soong configs
+// LineageOS soong configs
 
 bootstrap_go_package {
-    name: "soong-stag-generator",
-    pkgPath: "stag/soong/generator",
+    name: "soong-celestial-generator",
+    pkgPath: "celestial/soong/generator",
     deps: [
         "blueprint",
         "blueprint-pathtools",
@@ -17,11 +17,11 @@ bootstrap_go_package {
     pluginFor: ["soong_build"],
 }
 
-stag_generator {
+celestial_generator {
     name: "generated_kernel_includes",
 
     // The headers make command
-    cmd: "$(PATH_OVERRIDE_SOONG) $(KERNEL_MAKE_CMD) $(KERNEL_MAKE_FLAGS) -C $(TARGET_KERNEL_SOURCE) O=$(KERNEL_BUILD_OUT_PREFIX)$(genDir) ARCH=$(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) headers_install && vendor/stag/tools/clean_headers.sh $(KERNEL_BUILD_OUT_PREFIX)$(genDir)",
+    cmd: "$(PATH_OVERRIDE_SOONG) $(KERNEL_MAKE_CMD) $(KERNEL_MAKE_FLAGS) -C $(TARGET_KERNEL_SOURCE) O=$(KERNEL_BUILD_OUT_PREFIX)$(genDir) ARCH=$(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) headers_install && vendor/celestial/tools/clean_headers.sh $(KERNEL_BUILD_OUT_PREFIX)$(genDir)",
 
     // Directories that can be imported by a cc_* module generated_headers property
     export_include_dirs: [
@@ -30,12 +30,16 @@ stag_generator {
         "usr/include/audio",
         "usr/include/audio/include/uapi",
         "usr/techpack/audio/include",
-        "usr/audio/include/uapi"
     ],
 
     // Sources for dependency tracking
-    dep_root: "$(TARGET_KERNEL_HEADERS)",
-    dep_files: [ "Makefile", "include/**/*", "arch/$(KERNEL_ARCH)/include/**/*", "techpack/audio/include/**/*"],
+    dep_root: "$(TARGET_KERNEL_SOURCE)",
+    dep_files: [
+        "Makefile",
+        "include/**/*",
+        "arch/$(KERNEL_ARCH)/include/**/*",
+        "techpack/audio/include/**/*",
+    ],
 }
 
 cc_defaults {
@@ -51,54 +55,16 @@ cc_library_headers {
     defaults: ["generated_kernel_header_defaults"],
 }
 
-cc_library_headers {
-    name: "qti_kernel_headers",
-    defaults: ["generated_kernel_header_defaults"],
-}
+//cc_library_headers {
+//    name: "qti_kernel_headers",
+//    defaults: ["generated_kernel_header_defaults"],
+//}
 
 // Target platform agnostic config modules
 soong_config_module_type {
-    name: "camera_needs_client_info_lib",
-    module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
-    bool_variables: ["camera_needs_client_info_lib"],
-    properties: [
-        "cppflags",
-        "shared_libs",
-    ],
-}
-
-camera_needs_client_info_lib {
-    name: "camera_needs_client_info_lib_defaults",
-    soong_config_variables: {
-        camera_needs_client_info_lib: {
-            cppflags: ["-DCAMERA_NEEDS_CLIENT_INFO_LIB"],
-            shared_libs: ["//hardware/oneplus:vendor.oneplus.hardware.camera@1.0"],
-        },
-    },
-}
-
-soong_config_module_type {
-    name: "disable_postrender_cleanup",
-    module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
-    bool_variables: ["disable_postrender_cleanup"],
-    properties: ["cppflags"],
-}
-
-disable_postrender_cleanup {
-    name: "disable_postrender_cleanup_defaults",
-    soong_config_variables: {
-        disable_postrender_cleanup: {
-            cppflags: ["-DDISABLE_POSTRENDER_CLEANUP"],
-        },
-    },
-}
-
-soong_config_module_type {
     name: "aapt_version_code",
     module_type: "java_defaults",
-    config_namespace: "stagGlobalVars",
+    config_namespace: "celestialGlobalVars",
     value_variables: ["aapt_version_code"],
     properties: ["aaptflags"],
 }
@@ -110,7 +76,7 @@ aapt_version_code {
             aaptflags: [
                 "--version-code",
                 "%s",
-	    ],
+            ],
         },
     },
 }
@@ -118,7 +84,7 @@ aapt_version_code {
 soong_config_module_type {
     name: "camera_override_format_from_reserved",
     module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
+    config_namespace: "celestialGlobalVars",
     bool_variables: ["camera_override_format_from_reserved"],
     properties: ["cppflags"],
 }
@@ -135,7 +101,7 @@ camera_override_format_from_reserved {
 soong_config_module_type {
     name: "gralloc_10_usage_bits",
     module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
+    config_namespace: "celestialGlobalVars",
     value_variables: ["additional_gralloc_10_usage_bits"],
     properties: ["cppflags"],
 }
@@ -150,26 +116,9 @@ gralloc_10_usage_bits {
 }
 
 soong_config_module_type {
-    name: "target_process_sdk_version_overrides",
-    module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
-    value_variables: ["target_process_sdk_version_override"],
-    properties: ["cppflags"],
-}
-
-target_process_sdk_version_overrides {
-    name: "process_sdk_version_overrides_defaults",
-    soong_config_variables: {
-        target_process_sdk_version_override: {
-            cppflags: ["-DSDK_VERSION_OVERRIDES=\"%s\""],
-        },
-    },
-}
-
-soong_config_module_type {
     name: "gralloc_handle_custom_content_md_reserved_size",
     module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
+    config_namespace: "celestialGlobalVars",
     bool_variables: ["gralloc_handle_has_custom_content_md_reserved_size"],
     properties: ["export_cflags"],
 }
@@ -186,7 +135,7 @@ gralloc_handle_custom_content_md_reserved_size {
 soong_config_module_type {
     name: "gralloc_handle_reserved_size",
     module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
+    config_namespace: "celestialGlobalVars",
     bool_variables: ["gralloc_handle_has_reserved_size"],
     properties: ["export_cflags"],
 }
@@ -203,7 +152,7 @@ gralloc_handle_reserved_size {
 soong_config_module_type {
     name: "gralloc_handle_ubwcp_format",
     module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
+    config_namespace: "celestialGlobalVars",
     bool_variables: ["gralloc_handle_has_ubwcp_format"],
     properties: ["export_cflags"],
 }
@@ -220,7 +169,7 @@ gralloc_handle_ubwcp_format {
 soong_config_module_type {
     name: "target_shim_libs",
     module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
+    config_namespace: "celestialGlobalVars",
     value_variables: ["target_ld_shim_libs"],
     properties: ["cppflags"],
 }
@@ -237,7 +186,7 @@ target_shim_libs {
 soong_config_module_type {
     name: "vendor_init",
     module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
+    config_namespace: "celestialGlobalVars",
     value_variables: ["target_init_vendor_lib"],
     properties: ["whole_static_libs"],
 }
@@ -254,7 +203,7 @@ vendor_init {
 soong_config_module_type {
     name: "power_libperfmgr",
     module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
+    config_namespace: "celestialGlobalVars",
     value_variables: ["target_power_libperfmgr_mode_extension_lib"],
     properties: [
         "whole_static_libs",
@@ -273,7 +222,7 @@ power_libperfmgr {
 soong_config_module_type {
     name: "surfaceflinger_udfps_lib",
     module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
+    config_namespace: "celestialGlobalVars",
     value_variables: ["target_surfaceflinger_udfps_lib"],
     properties: [
         "cppflags",
@@ -292,26 +241,9 @@ surfaceflinger_udfps_lib {
 }
 
 soong_config_module_type {
-    name: "target_uses_prebuilt_dynamic_partitions",
-    module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
-    bool_variables: ["target_uses_prebuilt_dynamic_partitions"],
-    properties: ["cppflags"],
-}
-
-target_uses_prebuilt_dynamic_partitions {
-    name: "target_uses_prebuilt_dynamic_partitions_defaults",
-    soong_config_variables: {
-        target_uses_prebuilt_dynamic_partitions: {
-            cppflags: ["-DTARGET_USES_PREBUILT_DYNAMIC_PARTITIONS"],
-        },
-    },
-}
-
-soong_config_module_type {
     name: "trust_usb_control",
     module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
+    config_namespace: "celestialGlobalVars",
     value_variables: [
         "target_trust_usb_control_path",
         "target_trust_usb_control_enable",
@@ -336,128 +268,9 @@ trust_usb_control {
 }
 
 soong_config_module_type {
-    name: "ignores_ftp_pptp_conntrack_failure_defaults",
-    module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
-    bool_variables: ["ignores_ftp_pptp_conntrack_failure"],
-    properties: ["cppflags"],
-}
-
-ignores_ftp_pptp_conntrack_failure_defaults {
-    name: "ignores_ftp_pptp_conntrack_failure",
-    soong_config_variables: {
-        ignores_ftp_pptp_conntrack_failure: {
-            cppflags: ["-DIGNORES_FTP_PPTP_CONNTRACK_FAILURE"],
-        },
-    },
-}
-
-soong_config_module_type {
-    name: "needs_netd_direct_connect_rule",
-    module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
-    bool_variables: ["needs_netd_direct_connect_rule"],
-    properties: ["cppflags"],
-}
-
-needs_netd_direct_connect_rule {
-    name: "needs_netd_direct_connect_rule_defaults",
-    soong_config_variables: {
-        needs_netd_direct_connect_rule: {
-            cppflags: ["-DNEEDS_NETD_DIRECT_CONNECT_RULE"],
-        },
-    },
-}
-
-soong_config_module_type {
-    name: "camera_needs_client_info",
-    module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
-    bool_variables: ["camera_needs_client_info"],
-    properties: ["cppflags"],
-}
-
-camera_needs_client_info {
-    name: "camera_needs_client_info_defaults",
-    soong_config_variables: {
-        camera_needs_client_info: {
-            cppflags: ["-DCAMERA_NEEDS_CLIENT_INFO"],
-        },
-    },
-}
-
-soong_config_module_type {
-    name: "no_cameraserver",
-    module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
-    bool_variables: ["has_legacy_camera_hal1"],
-    properties: [
-        "cppflags",
-    ],
-}
-
-no_cameraserver {
-    name: "no_cameraserver_defaults",
-    soong_config_variables: {
-        has_legacy_camera_hal1: {
-            cppflags: [
-                "-DNO_CAMERA_SERVER",
-                "-Wno-overloaded-virtual",
-            ],
-        },
-    },
-}
-
-soong_config_module_type {
-    name: "camera_in_mediaserver",
-    module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
-    bool_variables: ["has_legacy_camera_hal1"],
-    properties: [
-        "overrides",
-        "shared_libs",
-    ],
-}
-
-camera_in_mediaserver {
-    name: "camera_in_mediaserver_defaults",
-    defaults: ["no_cameraserver_defaults"],
-    soong_config_variables: {
-        has_legacy_camera_hal1: {
-            overrides: ["cameraserver"],
-            shared_libs: [
-                "android.hardware.camera.common@1.0",
-                "android.hardware.camera.device@3.4",
-                "android.hardware.camera.provider@2.6",
-                "android.hardware.camera.provider@2.7",
-                "libcameraservice",
-                "libgui",
-            ],
-        },
-    },
-}
-
-soong_config_module_type {
-    name: "has_memfd_backport",
-    module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
-    bool_variables: ["has_memfd_backport"],
-    properties: ["cppflags"],
-}
-
-has_memfd_backport {
-    name: "has_memfd_backport_defaults",
-    soong_config_variables: {
-        has_memfd_backport: {
-            cppflags: ["-DHAS_MEMFD_BACKPORT"],
-        },
-    },
-}
-
-soong_config_module_type {
     name: "bootloader_message_offset",
     module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
+    config_namespace: "celestialGlobalVars",
     value_variables: ["bootloader_message_offset"],
     properties: [
         "cflags",
@@ -476,26 +289,9 @@ bootloader_message_offset {
 }
 
 soong_config_module_type {
-    name: "camera_parameter_library",
-    module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
-    value_variables: ["uses_camera_parameter_lib"],
-    properties: ["whole_static_libs"],
-}
-
-camera_parameter_library {
-    name: "camera_parameter_library_defaults",
-    soong_config_variables: {
-        uses_camera_parameter_lib: {
-            whole_static_libs: ["%s"],
-        },
-    },
-}
-
-soong_config_module_type {
     name: "egl_display_array",
     module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
+    config_namespace: "celestialGlobalVars",
     bool_variables: ["uses_egl_display_array"],
     properties: ["cflags"],
 }
@@ -512,7 +308,7 @@ egl_display_array {
 soong_config_module_type {
     name: "health_charging_control",
     module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
+    config_namespace: "celestialGlobalVars",
     bool_variables: [
         "target_health_charging_control_supports_toggle",
         "target_health_charging_control_supports_bypass",
@@ -558,7 +354,7 @@ health_charging_control {
 soong_config_module_type {
     name: "nvidia_enhancements",
     module_type: "cc_defaults",
-    config_namespace: "stagNvidiaVars",
+    config_namespace: "celestialNvidiaVars",
     bool_variables: ["uses_nvidia_enhancements"],
     properties: ["cppflags"],
 }
@@ -576,7 +372,7 @@ nvidia_enhancements {
 soong_config_module_type {
     name: "librmnetctl_pre_uplink",
     module_type: "cc_defaults",
-    config_namespace: "stagQcomVars",
+    config_namespace: "celestialQcomVars",
     bool_variables: ["uses_pre_uplink_features_netmgrd"],
     properties: ["cflags"],
 }
@@ -591,69 +387,9 @@ librmnetctl_pre_uplink {
 }
 
 soong_config_module_type {
-    name: "qti_camera_device",
-    module_type: "cc_defaults",
-    config_namespace: "stagQcomVars",
-    bool_variables: ["uses_qti_camera_device"],
-    properties: [
-        "cppflags",
-        "shared_libs",
-    ],
-}
-
-qti_camera_device {
-    name: "qti_camera_device_defaults",
-    soong_config_variables: {
-        uses_qti_camera_device: {
-            cppflags: ["-DQTI_CAMERA_DEVICE"],
-            shared_libs: ["vendor.qti.hardware.camera.device@1.0"],
-        },
-    },
-}
-
-soong_config_module_type {
-    name: "qti_usb_hal_supported_modes",
-    module_type: "cc_defaults",
-    config_namespace: "stagQcomVars",
-    bool_variables: ["supports_audio_accessory", "supports_debug_accessory"],
-    properties: [
-        "cppflags",
-    ],
-}
-
-qti_usb_hal_supported_modes {
-    name: "qti_usb_hal_supported_modes_defaults",
-    soong_config_variables: {
-        supports_audio_accessory: {
-            cppflags: ["-DSUPPORTS_AUDIO_ACCESSORY"],
-        },
-        supports_debug_accessory: {
-            cppflags: ["-DSUPPORTS_DEBUG_ACCESSORY"],
-        },
-    },
-}
-
-soong_config_module_type {
-    name: "needs_camera_boottime",
-    module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
-    bool_variables: ["needs_camera_boottime"],
-    properties: ["cppflags"],
-}
-
-needs_camera_boottime {
-    name: "needs_camera_boottime_defaults",
-    soong_config_variables: {
-        needs_camera_boottime: {
-            cppflags: ["-DTARGET_CAMERA_BOOTTIME_TIMESTAMP"],
-        },
-    },
-}
-
-soong_config_module_type {
     name: "extended_compress_format",
     module_type: "cc_defaults",
-    config_namespace: "stagQcomVars",
+    config_namespace: "celestialQcomVars",
     bool_variables: ["supports_extended_compress_format"],
     properties: ["cflags"],
 }
@@ -670,7 +406,7 @@ extended_compress_format {
 soong_config_module_type {
     name: "surfaceflinger_qcom_extensions",
     module_type: "cc_defaults",
-    config_namespace: "stagQcomVars",
+    config_namespace: "celestialQcomVars",
     value_variables: ["qcom_display_headers_namespace"],
     properties: [
         "cppflags",
@@ -689,111 +425,9 @@ surfaceflinger_qcom_extensions {
 }
 
 soong_config_module_type {
-    name: "stagefright_qcom_legacy",
-    module_type: "cc_defaults",
-    config_namespace: "stagQcomVars",
-    bool_variables: ["uses_qcom_bsp_legacy"],
-    properties: ["cppflags"],
-}
-
-stagefright_qcom_legacy {
-    name: "stagefright_qcom_legacy_defaults",
-    soong_config_variables: {
-        uses_qcom_bsp_legacy: {
-            cppflags: ["-DQCOM_BSP_LEGACY"],
-	},
-    },
-}
-soong_config_module_type {
-    name: "force_build_fingerprint",
-    module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
-    value_variables: ["force_build_fingerprint"],
-    properties: [
-        "cppflags"
-    ],
-}
-
-force_build_fingerprint {
-    name: "force_build_fingerprint_defaults",
-    soong_config_variables: {
-        force_build_fingerprint: {
-            cppflags: ["-DTARGET_FORCE_BUILD_FINGERPRINT=\"%s\""],
-        },
-    },
-}
-
-soong_config_module_type {
-    name: "no_camera_smooth_apis",
-    module_type: "cc_defaults",
-    config_namespace: "stagQcomVars",
-    bool_variables: ["no_camera_smooth_apis"],
-    properties: ["cppflags"],
-}
-
-no_camera_smooth_apis {
-    name: "no_camera_smooth_apis_defaults",
-    soong_config_variables: {
-        no_camera_smooth_apis: {
-            cppflags: ["-DTARGET_HAS_NO_CAMERA_SMOOTH_APIS"],
-        },
-    },
-}
-soong_config_module_type {
-    name: "inputdispatcher_skip_event_key",
-    module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
-    value_variables: ["target_inputdispatcher_skip_event_key"],
-    properties: ["cppflags"],
-}
-
-inputdispatcher_skip_event_key {
-    name: "inputdispatcher_skip_event_key_defaults",
-    soong_config_variables: {
-        target_inputdispatcher_skip_event_key: {
-            cppflags: ["-DINPUTDISPATCHER_SKIP_EVENT_KEY=%s"],
-        },
-    },
-}
-
-soong_config_module_type {
-    name: "uses_oplus_camera",
-    module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
-    bool_variables: ["uses_oplus_camera"],
-    properties: ["cppflags"],
-}
-
-uses_oplus_camera {
-    name: "uses_oplus_camera_defaults",
-    soong_config_variables: {
-        uses_oplus_camera: {
-            cppflags: ["-DUSES_OPLUS_CAMERA"],
-        },
-    },
-}
-
-soong_config_module_type {
-    name: "uses_nothing_camera",
-    module_type: "cc_defaults",
-    config_namespace: "stagGlobalVars",
-    bool_variables: ["uses_nothing_camera"],
-    properties: ["cppflags"],
-}
-
-uses_nothing_camera {
-    name: "uses_nothing_camera_defaults",
-    soong_config_variables: {
-        uses_nothing_camera: {
-            cppflags: ["-DUSES_NOTHING_CAMERA"],
-        },
-    },
-}
-
-soong_config_module_type {
     name: "qti_vibrator_hal",
     module_type: "cc_defaults",
-    config_namespace: "stagQcomVars",
+    config_namespace: "celestialQcomVars",
     bool_variables: ["qti_vibrator_use_effect_stream"],
     value_variables: ["qti_vibrator_effect_lib"],
     properties: [

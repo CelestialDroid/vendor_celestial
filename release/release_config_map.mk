@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018 The LineageOS Project
+# Copyright (C) 2024 The LineageOS Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,9 +12,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/celestial_arm.mk \
-    $(LOCAL_DIR)/celestial_arm64.mk \
-    $(LOCAL_DIR)/celestial_x86.mk
+# Get the directory for this file, and use that instead of a fixed path.
+local_dir := $(dir $(lastword $(MAKEFILE_LIST)))
+
+# Attach the flag value definitions to the various release configurations.
+$(call declare-release-config, ap2a, $(local_dir)build_config/ap2a.scl)
+
+local_dir :=

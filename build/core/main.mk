@@ -1,2 +1,2 @@
-# Include StagOS versions
-include $(TOPDIR)vendor/stag/build/core/main_version.mk
+# Include CelestialDroid versions
+include $(TOPDIR)vendor/celestial/build/core/main_version.mk

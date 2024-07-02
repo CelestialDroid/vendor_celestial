@@ -16,24 +16,24 @@
 -->
 <wallpapers>
 
-    <category id="stag" title="@string/category_stag" featured="monet_stag_blue">
+    <category id="celestial" title="@string/category_celestial" featured="monet_celestial_blue">
         <static-wallpaper
-            id="monet_stag_blue"
-            src="@drawable/monet_stag_blue"
-            title="@string/wallpaper_monet_stag_blue"
-            subtitle1="@string/author_team_stag" />
+            id="monet_celestial_blue"
+            src="@drawable/monet_celestial_blue"
+            title="@string/wallpaper_monet_celestial_blue"
+            subtitle1="@string/author_team_celestial" />
 
         <static-wallpaper
-            id="monet_stag_gold"
-            src="@drawable/monet_stag_gold"
-            title="@string/wallpaper_monet_stag_gold"
-            subtitle1="@string/author_team_stag" />
+            id="monet_celestial_gold"
+            src="@drawable/monet_celestial_gold"
+            title="@string/wallpaper_monet_celestial_gold"
+            subtitle1="@string/author_team_celestial" />
 
         <static-wallpaper
-            id="monet_stag_red"
-            src="@drawable/monet_stag_red"
-            title="@string/wallpaper_monet_stag_red"
-            subtitle1="@string/author_team_stag" />
+            id="monet_celestial_red"
+            src="@drawable/monet_celestial_red"
+            title="@string/wallpaper_monet_celestial_red"
+            subtitle1="@string/author_team_celestial" />
     </category>
 
 </wallpapers>

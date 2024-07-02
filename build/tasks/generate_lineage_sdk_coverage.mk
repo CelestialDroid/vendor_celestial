@@ -18,60 +18,60 @@
 # Makefile for producing lineage sdk coverage reports.
 # Run "make lineage-sdk-test-coverage" in the $ANDROID_BUILD_TOP directory.
 
-stag_sdk_api_coverage_exe := $(HOST_OUT_EXECUTABLES)/stag-sdk-api-coverage
+celestial_sdk_api_coverage_exe := $(HOST_OUT_EXECUTABLES)/celestial-sdk-api-coverage
 dexdeps_exe := $(HOST_OUT_EXECUTABLES)/dexdeps
 
-coverage_out := $(HOST_OUT)/stag-sdk-api-coverage
+coverage_out := $(HOST_OUT)/celestial-sdk-api-coverage
 
-api_text_description := stag-sdk/api/stag_current.txt
+api_text_description := celestial-sdk/api/celestial_current.txt
 api_xml_description := $(coverage_out)/api.xml
 $(api_xml_description) : $(api_text_description) $(APICHECK)
 	$(hide) echo "Converting API file to XML: $@"
 	$(hide) mkdir -p $(dir $@)
 	$(hide) $(APICHECK_COMMAND) -convert2xml $< $@
 
-stag-sdk-test-coverage-report := $(coverage_out)/stag-sdk-test-coverage.html
+celestial-sdk-test-coverage-report := $(coverage_out)/celestial-sdk-test-coverage.html
 
-stag_sdk_tests_apk := $(call intermediates-dir-for,APPS,StagPlatformTests)/package.apk
-stagsettingsprovider_tests_apk := $(call intermediates-dir-for,APPS,StagSettingsProviderTests)/package.apk
-stag_sdk_api_coverage_dependencies := $(stag_sdk_api_coverage_exe) $(dexdeps_exe) $(api_xml_description)
+celestial_sdk_tests_apk := $(call intermediates-dir-for,APPS,CelestialPlatformTests)/package.apk
+celestialsettingsprovider_tests_apk := $(call intermediates-dir-for,APPS,CelestialSettingsProviderTests)/package.apk
+celestial_sdk_api_coverage_dependencies := $(celestial_sdk_api_coverage_exe) $(dexdeps_exe) $(api_xml_description)
 
-$(stag-sdk-test-coverage-report): PRIVATE_TEST_CASES := $(stag_sdk_tests_apk) $(stagsettingsprovider_tests_apk)
-$(stag-sdk-test-coverage-report): PRIVATE_STAG_SDK_API_COVERAGE_EXE := $(stag_sdk_api_coverage_exe)
-$(stag-sdk-test-coverage-report): PRIVATE_DEXDEPS_EXE := $(dexdeps_exe)
-$(stag-sdk-test-coverage-report): PRIVATE_API_XML_DESC := $(api_xml_description)
-$(stag-sdk-test-coverage-report): $(stag_sdk_tests_apk) $(stagsettingsprovider_tests_apk) $(stag_sdk_api_coverage_dependencies) | $(ACP)
-	$(call generate-stag-coverage-report,"STAG-SDK API Coverage Report",\
+$(celestial-sdk-test-coverage-report): PRIVATE_TEST_CASES := $(celestial_sdk_tests_apk) $(celestialsettingsprovider_tests_apk)
+$(celestial-sdk-test-coverage-report): PRIVATE_CELESTIAL_SDK_API_COVERAGE_EXE := $(celestial_sdk_api_coverage_exe)
+$(celestial-sdk-test-coverage-report): PRIVATE_DEXDEPS_EXE := $(dexdeps_exe)
+$(celestial-sdk-test-coverage-report): PRIVATE_API_XML_DESC := $(api_xml_description)
+$(celestial-sdk-test-coverage-report): $(celestial_sdk_tests_apk) $(celestialsettingsprovider_tests_apk) $(celestial_sdk_api_coverage_dependencies) | $(ACP)
+	$(call generate-celestial-coverage-report,"CELESTIAL-SDK API Coverage Report",\
 			$(PRIVATE_TEST_CASES),html)
 
-.PHONY: stag-sdk-test-coverage
-stag-sdk-test-coverage : $(stag-sdk-test-coverage-report)
+.PHONY: celestial-sdk-test-coverage
+celestial-sdk-test-coverage : $(celestial-sdk-test-coverage-report)
 
-# Put the test coverage report in the dist dir if "stag-sdk" is among the build goals.
-ifneq ($(filter stag-sdk, $(MAKECMDGOALS)),)
-  $(call dist-for-goals, stag-sdk, $(stag-sdk-test-coverage-report):stag-sdk-test-coverage-report.html)
+# Put the test coverage report in the dist dir if "celestial-sdk" is among the build goals.
+ifneq ($(filter celestial-sdk, $(MAKECMDGOALS)),)
+  $(call dist-for-goals, celestial-sdk, $(celestial-sdk-test-coverage-report):celestial-sdk-test-coverage-report.html)
 endif
 
 # Arguments;
 #  1 - Name of the report printed out on the screen
 #  2 - List of apk files that will be scanned to generate the report
 #  3 - Format of the report
-define generate-stag-coverage-report
+define generate-celestial-coverage-report
 	$(hide) mkdir -p $(dir $@)
-	$(hide) $(PRIVATE_STAG_SDK_API_COVERAGE_EXE) -d $(PRIVATE_DEXDEPS_EXE) -a $(PRIVATE_API_XML_DESC) -f $(3) -o $@ $(2) -cm
+	$(hide) $(PRIVATE_CELESTIAL_SDK_API_COVERAGE_EXE) -d $(PRIVATE_DEXDEPS_EXE) -a $(PRIVATE_API_XML_DESC) -f $(3) -o $@ $(2) -cm
 	@ echo $(1): file://$@
 endef
 
 # Reset temp vars
-stag_sdk_api_coverage_dependencies :=
-stag-sdk-combined-coverage-report :=
-stag-sdk-combined-xml-coverage-report :=
-stag-sdk-verifier-coverage-report :=
-stag-sdk-test-coverage-report :=
+celestial_sdk_api_coverage_dependencies :=
+celestial-sdk-combined-coverage-report :=
+celestial-sdk-combined-xml-coverage-report :=
+celestial-sdk-verifier-coverage-report :=
+celestial-sdk-test-coverage-report :=
 api_xml_description :=
 api_text_description :=
 coverage_out :=
 dexdeps_exe :=
-stag_sdk_api_coverage_exe :=
-stag_sdk_verifier_apk :=
-android_stag_sdk_zip :=
+celestial_sdk_api_coverage_exe :=
+celestial_sdk_verifier_apk :=
+android_celestial_sdk_zip :=

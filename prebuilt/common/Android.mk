@@ -18,10 +18,10 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := apns-conf.xml
 LOCAL_MODULE_CLASS := ETC
 
-DEFAULT_APNS_FILE := vendor/stag/prebuilt/common/etc/apns-conf.xml
+DEFAULT_APNS_FILE := vendor/celestial/prebuilt/common/etc/apns-conf.xml
 
 ifdef CUSTOM_APNS_FILE
-CUSTOM_APNS_SCRIPT := vendor/stag/tools/custom_apns.py
+CUSTOM_APNS_SCRIPT := vendor/celestial/tools/custom_apns.py
 FINAL_APNS_FILE := $(local-generated-sources-dir)/apns-conf.xml
 
 $(FINAL_APNS_FILE): PRIVATE_SCRIPT := $(CUSTOM_APNS_SCRIPT)
@@ -64,10 +64,10 @@ LOCAL_MODULE_SUFFIX := $(COMMON_ANDROID_PACKAGE_SUFFIX)
 LOCAL_DEX_PREOPT := false
 include $(BUILD_PREBUILT)
 
-# StagWalls
+# CelestialWalls
 include $(CLEAR_VARS)
-LOCAL_MODULE := StagWalls
-LOCAL_SRC_FILES := app/StagWalls.apk
+LOCAL_MODULE := CelestialWalls
+LOCAL_SRC_FILES := app/CelestialWalls.apk
 LOCAL_MODULE_CLASS := APPS
 LOCAL_MODULE_TAGS := optional
 LOCAL_CERTIFICATE := platform

@@ -13,14 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-STAG_SRC_API_DIR := $(TOPDIR)prebuilts/stag-sdk/api
-INTERNAL_STAG_PLATFORM_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/stag_public_api.txt
-INTERNAL_STAG_PLATFORM_REMOVED_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/stag_removed.txt
-FRAMEWORK_STAG_PLATFORM_API_FILE := $(TOPDIR)stag-sdk/api/stag_current.txt
-FRAMEWORK_STAG_PLATFORM_REMOVED_API_FILE := $(TOPDIR)stag-sdk/api/stag_removed.txt
-FRAMEWORK_STAG_API_NEEDS_UPDATE_TEXT := $(TOPDIR)vendor/stag/build/core/apicheck_msg_current.txt
+CELESTIAL_SRC_API_DIR := $(TOPDIR)prebuilts/celestial-sdk/api
+INTERNAL_CELESTIAL_PLATFORM_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/celestial_public_api.txt
+INTERNAL_CELESTIAL_PLATFORM_REMOVED_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/celestial_removed.txt
+FRAMEWORK_CELESTIAL_PLATFORM_API_FILE := $(TOPDIR)celestial-sdk/api/celestial_current.txt
+FRAMEWORK_CELESTIAL_PLATFORM_REMOVED_API_FILE := $(TOPDIR)celestial-sdk/api/celestial_removed.txt
+FRAMEWORK_CELESTIAL_API_NEEDS_UPDATE_TEXT := $(TOPDIR)vendor/celestial/build/core/apicheck_msg_current.txt
 
-BUILD_RRO_SYSTEM_PACKAGE := $(TOPDIR)vendor/stag/build/core/system_rro.mk
+BUILD_RRO_SYSTEM_PACKAGE := $(TOPDIR)vendor/celestial/build/core/system_rro.mk
 
 # Rules for QCOM targets
-include $(TOPDIR)vendor/stag/build/core/qcom_target.mk
+include $(TOPDIR)vendor/celestial/build/core/qcom_target.mk

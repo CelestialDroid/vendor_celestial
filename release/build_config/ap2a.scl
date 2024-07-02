@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018 The LineageOS Project
+# Copyright (C) 2024 The LineageOS Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,9 +12,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/celestial_arm.mk \
-    $(LOCAL_DIR)/celestial_arm64.mk \
-    $(LOCAL_DIR)/celestial_x86.mk
+
+load("//build/make/core/release_config.scl", "value")
+
+values = [
+    # keep-sorted start numeric=yes
+    value("RELEASE_ACONFIG_VALUE_SETS", "aconfig_value_set-celestial-ap2a"),
+    # keep-sorted end
+]

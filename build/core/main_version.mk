@@ -1,19 +1,19 @@
-# StagOS System Version
-ADDITIONAL_SYSTEM_PROPERTIES += \
-    ro.stag.releasetype=$(STAG_BUILD_TYPE) \
-    ro.modversion=$(STAG_VERSION) \
+# CelestialDroid System Version
+#ADDITIONAL_SYSTEM_PROPERTIES += \
+    ro.celestial.releasetype=$(CELESTIAL_BUILDTYPE) \
+    ro.modversion=$(CELESTIAL_VERSION) \
 
-# StagOS Platform Display Version
+# CelestialDroid Platform Display Version
 ADDITIONAL_SYSTEM_PROPERTIES += \
-    ro.stag.display.version=$(STAG_DISPLAY_VERSION)
+    ro.celestial.display.version=$(CELESTIAL_DISPLAY_VERSION)
 
-# StagOS Platform SDK Version
+# CelestialDroid Platform SDK Version
 ADDITIONAL_SYSTEM_PROPERTIES += \
-    ro.stag.build.version.plat.sdk=$(STAG_PLATFORM_SDK_VERSION)
+    ro.celestial.build.version.plat.sdk=$(CELESTIAL_PLATFORM_SDK_VERSION)
 
-# StagOS Platform Internal Version
+# CelestialDroid Platform Internal Version
 ADDITIONAL_SYSTEM_PROPERTIES += \
-    ro.stag.build.version.plat.rev=$(STAG_PLATFORM_REV)
+    ro.celestial.build.version.plat.rev=$(CELESTIAL_PLATFORM_REV)
 
 # Build fingerprint
 ifeq ($(BUILD_FINGERPRINT),)

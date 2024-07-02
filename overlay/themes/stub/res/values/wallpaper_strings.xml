@@ -12,10 +12,10 @@
     limitations under the License.
 -->
 <resources>
-    <string name="category_stag">Stag</string>
-    <string name="author_team_stag">by Team Stag</string>
+    <string name="category_celestial">Celestial</string>
+    <string name="author_team_celestial">by Team Celestial</string>
 
-    <string name="wallpaper_monet_stag_blue">Cyan Hue</string>
-    <string name="wallpaper_monet_stag_gold">Gold Hue</string>
-    <string name="wallpaper_monet_stag_red">Red Hue</string>
+    <string name="wallpaper_monet_celestial_blue">Cyan Hue</string>
+    <string name="wallpaper_monet_celestial_gold">Gold Hue</string>
+    <string name="wallpaper_monet_celestial_red">Red Hue</string>
 </resources>

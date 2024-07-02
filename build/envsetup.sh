@@ -1,16 +1,16 @@
-function __print_stag_functions_help() {
+function __print_celestial_functions_help() {
 cat <<EOF
-Additional StagOS functions:
+Additional CelestialDroid functions:
 - cout:            Changes directory to out.
 - mmp:             Builds all of the modules in the current directory and pushes them to the device.
 - mmap:            Builds all of the modules in the current directory and its dependencies, then pushes the package to the device.
 - mmmp:            Builds all of the modules in the supplied directories and pushes them to the device.
-- staggerrit:      A Git wrapper that fetches/pushes patch from/to StagOS Gerrit Review.
-- stagrebase:      Rebase a Gerrit change and push it again.
-- stagremote:      Add git remote for StagOS Gerrit Review.
+- celestialgerrit:      A Git wrapper that fetches/pushes patch from/to CelestialDroid Gerrit Review.
+- celestialrebase:      Rebase a Gerrit change and push it again.
+- celestialremote:      Add git remote for CelestialDroid Gerrit Review.
 - aospremote:      Add git remote for matching AOSP repository.
 - cloremote:       Add git remote for matching CodeLinaro repository.
-- githubremote:    Add git remote for StagOS Github.
+- githubremote:    Add git remote for CelestialDroid Github.
 - mka:             Builds using SCHED_BATCH on all processors.
 - mkap:            Builds the module(s) using mka and pushes them to the device.
 - cmka:            Cleans and builds using mka.
@@ -58,7 +58,7 @@ function brunch()
 {
     breakfast $*
     if [ $? -eq 0 ]; then
-        mka stag
+        mka bacon
     else
         echo "No such item in brunch menu. Try 'breakfast'"
         return 1
@@ -70,6 +70,7 @@ function breakfast()
 {
     target=$1
     local variant=$2
+    #source ${ANDROID_BUILD_TOP}/vendor/lineage/vars/aosp_target_release
 
     if [ $# -eq 0 ]; then
         # No arguments, so let's have the full menu
@@ -79,12 +80,12 @@ function breakfast()
             # A buildtype was specified, assume a full device name
             lunch $target
         else
-            # This is probably just the stag model name
+            # This is probably just the celestial model name
             if [ -z "$variant" ]; then
                 variant="userdebug"
             fi
 
-            lunch stag_$target-ap2a-$variant
+            lunch celestial_$target-ap2a-$variant
         fi
     fi
     return $?
@@ -95,7 +96,7 @@ alias bib=breakfast
 function eat()
 {
     if [ "$OUT" ] ; then
-        ZIPPATH=`ls -tr "$OUT"/StagOS-*.zip | tail -1`
+        ZIPPATH=`ls -tr "$OUT"/CelestialDroid-*.zip | tail -1`
         if [ ! -f $ZIPPATH ] ; then
             echo "Nothing to eat"
             return 1
@@ -109,7 +110,7 @@ function eat()
             done
             echo "Device Found.."
         fi
-        if (adb shell getprop ro.stag.device | grep -q "$STAG_BUILD"); then
+        if (adb shell getprop ro.celestial.device | grep -q "$CELESTIAL_BUILD"); then
             # if adbd isn't root we can't write to /cache/recovery/
             adb root
             sleep 1
@@ -125,7 +126,7 @@ EOF
             fi
             rm /tmp/command
         else
-            echo "The connected device does not appear to be $STAG_BUILD, run away!"
+            echo "The connected device does not appear to be $CELESTIAL_BUILD, run away!"
         fi
         return $?
     else
@@ -249,43 +250,43 @@ function dddclient()
    fi
 }
 
-function stagremote()
+function celestialremote()
 {
     if ! git rev-parse --git-dir &> /dev/null
     then
         echo ".git directory not found. Please run this from the root directory of the Android repository you wish to set up."
         return 1
     fi
-    git remote rm stag 2> /dev/null
+    git remote rm celestial 2> /dev/null
     local REMOTE=$(git config --get remote.github.projectname)
-    local STAG="true"
+    local CELESTIAL="true"
     if [ -z "$REMOTE" ]
     then
         REMOTE=$(git config --get remote.aosp.projectname)
-        STAG="false"
+        CELESTIAL="false"
     fi
     if [ -z "$REMOTE" ]
     then
         REMOTE=$(git config --get remote.clo.projectname)
-        STAG="false"
+        CELESTIAL="false"
     fi
 
-    if [ $STAG = "false" ]
+    if [ $CELESTIAL = "false" ]
     then
         local PROJECT=$(echo $REMOTE | sed -e "s#platform/#android/#g; s#/#_#g")
-        local PFX="StagOS/"
+        local PFX="CelestialDroid/"
     else
         local PROJECT=$REMOTE
     fi
 
-    local STAG_USER=$(git config --get review.review.stagos.org.username)
-    if [ -z "$STAG_USER" ]
+    local CELESTIAL_USER=$(git config --get review.review.celestialdroid.org.username)
+    if [ -z "$CELESTIAL_USER" ]
     then
-        git remote add stag ssh://review.stagos.org:29418/$PFX$PROJECT
+        git remote add celestial ssh://review.celestialdroid.org:29418/$PFX$PROJECT
     else
-        git remote add stag ssh://$STAG_USER@review.stagos.org:29418/$PFX$PROJECT
+        git remote add celestial ssh://$CELESTIAL_USER@review.celestialdroid.org:29418/$PFX$PROJECT
     fi
-    echo "Remote 'stag' created"
+    echo "Remote 'celestial' created"
 }
 
 function aospremote()
@@ -327,7 +328,7 @@ function cloremote()
         # Google moved the repo location in Oreo
         if [ $PROJECT = "build/make" ]
         then
-            PROJECT="build"
+            PROJECT="build_repo"
         fi
         if [[ $PROJECT =~ "qcom/opensource" ]];
         then
@@ -359,7 +360,7 @@ function githubremote()
 
     local PROJECT=$(echo $REMOTE | sed -e "s#platform/#android/#g; s#/#_#g")
 
-    git remote add github https://github.com/StagOS/$PROJECT
+    git remote add github https://github.com/CelestialDroid/$PROJECT
     echo "Remote 'github' created"
 }
 
@@ -393,7 +394,7 @@ function installboot()
     sleep 1
     adb wait-for-online shell mount /system 2>&1 > /dev/null
     adb wait-for-online remount
-    if (adb shell getprop ro.stag.device | grep -q "$STAG_BUILD");
+    if (adb shell getprop ro.celestial.device | grep -q "$CELESTIAL_BUILD");
     then
         adb push $OUT/boot.img /cache/
         if [ -e "$OUT/system/lib/modules/*" ];
@@ -408,7 +409,7 @@ function installboot()
         adb shell rm -rf /cache/boot.img
         echo "Installation complete."
     else
-        echo "The connected device does not appear to be $STAG_BUILD, run away!"
+        echo "The connected device does not appear to be $CELESTIAL_BUILD, run away!"
     fi
 }
 
@@ -442,14 +443,14 @@ function installrecovery()
     sleep 1
     adb wait-for-online shell mount /system 2>&1 >> /dev/null
     adb wait-for-online remount
-    if (adb shell getprop ro.stag.device | grep -q "$STAG_BUILD");
+    if (adb shell getprop ro.celestial.device | grep -q "$CELESTIAL_BUILD");
     then
         adb push $OUT/recovery.img /cache/
         adb shell dd if=/cache/recovery.img of=$PARTITION
         adb shell rm -rf /cache/recovery.img
         echo "Installation complete."
     else
-        echo "The connected device does not appear to be $STAG_BUILD, run away!"
+        echo "The connected device does not appear to be $CELESTIAL_BUILD, run away!"
     fi
 }
 
@@ -469,13 +470,13 @@ function makerecipe() {
     if [ "$REPO_REMOTE" = "github" ]
     then
         pwd
-        stagremote
-        git push stag HEAD:refs/heads/'$1'
+        celestialremote
+        git push celestial HEAD:refs/heads/'$1'
     fi
     '
 }
 
-function staggerrit() {
+function celestialgerrit() {
     if [ "$(basename $SHELL)" = "zsh" ]; then
         # zsh does not define FUNCNAME, derive from funcstack
         local FUNCNAME=$funcstack[1]
@@ -485,7 +486,7 @@ function staggerrit() {
         $FUNCNAME help
         return 1
     fi
-    local user=`git config --get review.review.stagos.org.username`
+    local user=`git config --get review.review.celestialdroid.org.username`
     local review=`git config --get remote.github.review`
     local project=`git config --get remote.github.projectname`
     local command=$1
@@ -521,7 +522,7 @@ EOF
             case $1 in
                 __cmg_*) echo "For internal use only." ;;
                 changes|for)
-                    if [ "$FUNCNAME" = "staggerrit" ]; then
+                    if [ "$FUNCNAME" = "celestialgerrit" ]; then
                         echo "'$FUNCNAME $1' is deprecated."
                     fi
                     ;;
@@ -614,7 +615,7 @@ EOF
                 ${local_branch}:refs/for/$remote_branch || return 1
             ;;
         changes|for)
-            if [ "$FUNCNAME" = "staggerrit" ]; then
+            if [ "$FUNCNAME" = "celestialgerrit" ]; then
                 echo >&2 "'$FUNCNAME $command' is deprecated."
             fi
             ;;
@@ -713,15 +714,15 @@ EOF
     esac
 }
 
-function stagrebase() {
+function celestialrebase() {
     local repo=$1
     local refs=$2
     local pwd="$(pwd)"
     local dir="$(gettop)/$repo"
 
     if [ -z $repo ] || [ -z $refs ]; then
-        echo "StagOS Gerrit Rebase Usage: "
-        echo "      stagrebase <path to project> <patch IDs on Gerrit>"
+        echo "CelestialDroid Gerrit Rebase Usage: "
+        echo "      celestialrebase <path to project> <patch IDs on Gerrit>"
         echo "      The patch IDs appear on the Gerrit commands that are offered."
         echo "      They consist on a series of numbers and slashes, after the text"
         echo "      refs/changes. For example, the ID in the following command is 26/8126/2"
@@ -742,7 +743,7 @@ function stagrebase() {
     echo "Bringing it up to date..."
     repo sync .
     echo "Fetching change..."
-    git fetch "http://review.stagos.org/p/$repo" "refs/changes/$refs" && git cherry-pick FETCH_HEAD
+    git fetch "http://review.celestialdroid.org/p/$repo" "refs/changes/$refs" && git cherry-pick FETCH_HEAD
     if [ "$?" != "0" ]; then
         echo "Error cherry-picking. Not uploading!"
         return
@@ -754,7 +755,9 @@ function stagrebase() {
     cd $pwd
 }
 
-alias mka=m
+function mka() {
+    m "$@"
+}
 
 function cmka() {
     if [ ! -z "$1" ]; then
@@ -825,7 +828,7 @@ function dopush()
         echo "Device Found."
     fi
 
-    if (adb shell getprop ro.stag.device | grep -q "$STAG_BUILD") || [ "$FORCE_PUSH" = "true" ];
+    if (adb shell getprop ro.celestial.device | grep -q "$CELESTIAL_BUILD") || [ "$FORCE_PUSH" = "true" ];
     then
     # retrieve IP and PORT info if we're using a TCP connection
     TCPIPPORT=$(adb devices \
@@ -875,7 +878,7 @@ function dopush()
         CHKPERM="/data/local/tmp/chkfileperm.sh"
 (
 cat <<'EOF'
-#!/system/xbin/sh
+#!/system/bin/sh
 FILE=$@
 if [ -e $FILE ]; then
     ls -l $FILE | awk '{k=0;for(i=0;i<=8;i++)k+=((substr($1,i+2,1)~/[rwx]/)*2^(8-i));if(k)printf("%0o ",k);print}' | cut -d ' ' -f1
@@ -921,7 +924,7 @@ EOF
                 fi
                 adb shell restorecon "$TARGET"
             ;;
-            /system/priv-app/SystemUI/SystemUI.apk|/system/framework/*)
+            */SystemUI.apk|*/framework/*)
                 # Only need to stop services once
                 if ! $stop_n_start; then
                     adb shell stop
@@ -945,7 +948,7 @@ EOF
     rm -f $OUT/.log
     return 0
     else
-        echo "The connected device does not appear to be $STAG_BUILD, run away!"
+        echo "The connected device does not appear to be $CELESTIAL_BUILD, run away!"
     fi
 }
 
@@ -958,12 +961,12 @@ alias cmkap='dopush cmka'
 
 function picklist() {
     T=$(gettop)
-    $T/vendor/stag/build/tools/picklist.py $@
+    $T/vendor/celestial/build/tools/picklist.py $@
 }
 
 function repopick() {
     T=$(gettop)
-    $T/vendor/stag/build/tools/repopick.py $@
+    $T/vendor/celestial/build/tools/repopick.py $@
 }
 
 function sort-blobs-list() {
@@ -974,14 +977,15 @@ function sort-blobs-list() {
 function fixup_common_out_dir() {
     common_out_dir=$(get_build_var OUT_DIR)/target/common
     target_device=$(get_build_var TARGET_DEVICE)
-    if [ ! -z $STAG_FIXUP_COMMON_OUT ]; then
+    common_target_out=common-${target_device}
+    if [ ! -z $CELESTIAL_FIXUP_COMMON_OUT ]; then
         if [ -d ${common_out_dir} ] && [ ! -L ${common_out_dir} ]; then
             mv ${common_out_dir} ${common_out_dir}-${target_device}
-            ln -s ${common_out_dir}-${target_device} ${common_out_dir}
+            ln -s ${common_target_out} ${common_out_dir}
         else
             [ -L ${common_out_dir} ] && rm ${common_out_dir}
             mkdir -p ${common_out_dir}-${target_device}
-            ln -s ${common_out_dir}-${target_device} ${common_out_dir}
+            ln -s ${common_target_out} ${common_out_dir}
         fi
     else
         [ -L ${common_out_dir} ] && rm ${common_out_dir}
